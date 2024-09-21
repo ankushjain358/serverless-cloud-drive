@@ -1,11 +1,11 @@
 "use client";
 
-import { MoonIcon, SunIcon } from 'lucide-react';
+import { ModeToggle } from '@/components/mode-toggle';
 import Link from 'next/link';
 
 const Header = () => {
   return (
-    <nav className="bg-black  flex-shrink-0">
+    <nav className="bg-black flex-shrink-0">
       <div className="w-full mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -34,16 +34,11 @@ const Header = () => {
           <div className="flex items-center">
             <Link
               href="/auth"
-              className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium me-2"
             >
               Login / Register
             </Link>
-            <button className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md ">
-              <SunIcon className="text-white h-4 w-4" />
-            </button>
-            <button className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md ">
-              <MoonIcon className="text-white h-4 w-4" />
-            </button>
+            <ModeToggle></ModeToggle>
           </div>
         </div>
       </div>
