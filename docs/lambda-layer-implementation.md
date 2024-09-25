@@ -2,17 +2,35 @@
 
 ## Creating sharp layer
 
-1. First, clone this repo on Amazon Cloudshell (Amazon Linux 2023).
-2. Run `cd amplify\layers\sharp-layer`.
-3. Ensure that you have shell permission to run the scripts in the layer directory.
+1. Open Cloudhsell, and create a new directory.
 
     ```bash
-    chmod 744 1-install.sh && chmod 744 2-package.sh
+    cd /
+    sudo mkdir <dirname>
+    cd <dirname>
     ```
 
-4. Run the `install.sh` script to install npm packages.
-5. Run the `package.sh` script to package the layer.
-6. Now, run below command to create the layer.
+2. First, clone this repo on Amazon Cloudshell (Amazon Linux 2023).
+
+    ```bash
+    sudo git clone https://github.com/ankushjain358/serverless-cloud-drive.git
+    ```
+
+3. Run the following commands.
+
+    ```bash
+    cd serverless-cloud-drive/amplify/layers/sharp-layer
+    ```
+
+4. Ensure that you have shell permission to run the scripts in the layer directory.
+
+    ```bash
+    sudo chmod 744 install.sh && sudo chmod 744 package.sh
+    ```
+
+5. Run the `sudo ./install.sh` script to install npm packages.
+6. Run the `sudo ./package.sh` script to package the layer.
+7. Now, run below command to create the layer.
 
     ```bash
     aws lambda publish-layer-version --layer-name node-sharp-layer \
@@ -21,7 +39,7 @@
         --compatible-architectures "x86_64"
     ```
 
-7. Copy the ARN, and update wherever required.
+8. Copy the ARN, and update wherever required.
 
 ## References
 
