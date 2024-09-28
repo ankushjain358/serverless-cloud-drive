@@ -64,6 +64,15 @@ const sharpLayer = new lambda.LayerVersion(secondaryStack, 'SharpLayer', {
   description: 'A Lambda Layer with sharp for image processing',
 });
 
+const ffmpegLayerPath = path.join(__dirname, 'layers/ffmpeg-layer.zip');
+
+const ffmpegLayer = new lambda.LayerVersion(secondaryStack, 'FFmpegLayer', {
+  code: lambda.Code.fromAsset(ffmpegLayerPath),
+  compatibleArchitectures: [lambda.Architecture.X86_64],
+  compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
+  description: 'A Lambda Layer with FFmpeg for video processing',
+});
+
 //********* END: Secondary Stack ***************/
 
 
