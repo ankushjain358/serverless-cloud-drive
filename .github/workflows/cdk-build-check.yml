@@ -1,4 +1,4 @@
-name: Next.js and CDK Build Check
+name: CDK Build Check
 
 
 on:

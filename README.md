@@ -34,26 +34,29 @@ Follow below steps to deploy the application on AWS account.
 
 ### 2.1. Run application locally
 
-1. Create a `.env` file on the root directory.
+1. Run `npm install` to install dependencies.
+2. Configure AWS Profile
+3. Create a `.env` file on the root directory.
 
     ```env
     SHARP_LAMBDA_LAYER_ARN='<Sharp Layer ARN>'
     FFMPEG_LAMBDA_LAYER_ARN='<FFmpeg Layer ARN>'
     ```
 
-2. Run the following command to create new sandbox environment.
-
-    ```bash
-    npx ampx sandbox
-    ```
-
-3. After successful deployment, run Next.js app.
-
-    ```bash
-    npm run dev
-    ```
+4. Run `npx ampx sandbox` to provision backend infra in AWS.
+5. Run `npm run dev` to run the app.
+6. Open `http://localhost:3000` with your browser to see the result.
 
 ### 2.2. Run application on AWS Amplify Hosting
+
+1. Fork the repository in your GitHub account.
+2. Follow the detailed instructions on deploying your application, refer to the [deployment section](https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/#deploy-a-fullstack-app-to-aws) of our documentation.
+3. Go **Amplify Console > Select your app > Hosting > Environment Variables**, and add below environment variables.
+     
+    ```
+    SHARP_LAMBDA_LAYER_ARN='<Sharp Layer ARN>'
+    FFMPEG_LAMBDA_LAYER_ARN='<FFmpeg Layer ARN>'
+    ```  
 
 ## Architecture
 
