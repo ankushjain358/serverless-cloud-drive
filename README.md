@@ -24,10 +24,36 @@ A fully serverless cloud drive application built with modern web technologies, p
 
 Follow below steps to deploy the application on AWS account.
 
-### 1. Deploy application (frontend + backend)
+### 1. Deploy Lambda layers
 
-1. TODO
-2. TODO
+1. Run `cd cdk` to navigate to `cdk` directory.
+2. Run `cdk deploy` to deploy the stack.
+3. Once the deployment finishes, note down the layer ARNs for below layers.
+    - Sharp
+    - FFmpeg
+
+### 2.1. Run application locally
+
+1. Create a `.env.local` file on the root directory.
+
+    ```env
+    SHARP_LAMBDA_LAYER_ARN='<Sharp Layer ARN>'
+    FFMPEG_LAMBDA_LAYER_ARN='<FFmpeg Layer ARN>'
+    ```
+
+2. Run the following command to create new sandbox environment.
+
+    ```bash
+    npx ampx sandbox
+    ```
+
+3. After successful deployment, run Next.js app.
+
+    ```bash
+    npm run dev
+    ```
+
+### 2.2. Run application on AWS Amplify Hosting
 
 ## Architecture
 
@@ -52,22 +78,12 @@ To learn more, refer to [Layer paths for each Lambda runtime](https://docs.aws.a
 
 ### 1. How to update Sharp lambda layer?
 
-1. CDK is already configured to pick the Sharp layer from `amplify\layers\sharp-layer.zip`.
-2. Go to `amplify\layers`, and deleet `sharp-layer.zip` file.
-3. Now run `npx ampx sandbox`, this time `sharp-layer.zip` file is not found, so CDK uses docker bundling to create layer artifacts.
-4. After successful deployment, go to AWS console, download the layer content.
-5. Rename the downloaded file with `sharp-layer.zip`, and copy it at ``amplify\layers` path.
-6. That's all!
+Redeploy the CDK stack located at `cdk` directory. This creates a new version of Lambda layer with the latest `Sharp` version.
 
 ### 2. How to update FFmpeg lambda layer?
 
-1. Go to `https://johnvansickle.com/ffmpeg/` website which hosts static builds of FFmpeg.
-2. Download `ffmpeg-release-amd64-static.tar.xz` file, and extract its content.
-3. Create new folder `ffmpeg/bin`.
-4. From the extracted content, select `ffmpeg` and `ffprobe` files, copy both files inside `ffmpeg/bin`.
-5. Now, create a zip of `ffmpeg/bin/*` with file name `ffmpeg-layer.zip`.
-6. Copy this `ffmpeg-layer.zip` file at `amplify\layers` location.
-7. CDK is already configured to pick the FFmpeg layer from `amplify\layers\ffmpeg-layer.zip`.
-8. That's all!
+Redeploy the CDK stack located at `cdk` directory. This creates new version of Lambda layer with the latest `FFmpeg` version.
+
+> Note: Here, the deployment might fail, and the you have to update the version hardcoded in the command.
 
 ### 3. How to update Lambda functions when new Node.js runtime releases?
