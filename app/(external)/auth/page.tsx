@@ -42,7 +42,7 @@ function AuthRedirect({ user }: AuthRedirectProps) {
 
     if (appUser) {
         return (
-            <div className="flex items-center justify-center h-screen">
+            <div>
                 <Loader2 className="h-8 w-8 animate-spin" />
             </div>
         );

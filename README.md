@@ -34,7 +34,7 @@ Follow below steps to deploy the application on AWS account.
 
 ### 2.1. Run application locally
 
-1. Create a `.env.local` file on the root directory.
+1. Create a `.env` file on the root directory.
 
     ```env
     SHARP_LAMBDA_LAYER_ARN='<Sharp Layer ARN>'

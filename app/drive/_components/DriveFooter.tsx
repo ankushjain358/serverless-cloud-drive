@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
-const Footer = () => {
+const DriveFooter = () => {
     return (
-        <footer className="bg-black flex-shrink-0">
-            <div className="w-full mx-auto px-4 lg:px-20">
+        <footer className="bg-black py-4 flex-shrink-0">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-center">
                     <Link href="/" className="text-white font-bold text-xl">
                         Cloud Drive
@@ -14,4 +14,4 @@ const Footer = () => {
     );
 };
 
-export default Footer;
+export default DriveFooter;
