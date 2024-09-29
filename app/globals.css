@@ -59,6 +59,26 @@
   }
 }
 
+:root {
+  /* Modified the variables for the Authenticator component to align with the black and white theme. */
+  --amplify-components-tabs-item-color: black !important;
+  --amplify-components-tabs-item-active-color: black !important;
+  --amplify-components-tabs-item-hover-color: #333 !important;
+  --amplify-components-tabs-item-hover-active-color: #222 !important;
+  --amplify-components-tabs-item-active-border-color: black !important;
+  --amplify-components-button-primary-background-color: black !important;
+  --amplify-components-button-primary-hover-background-color: #333 !important;
+  --amplify-components-button-primary-color: white !important;
+  --amplify-components-button-primary-hover-color: white !important;
+  --amplify-components-button-link-color: black !important;
+  --amplify-components-button-link-hover-color: #333 !important;
+  --amplify-components-button-hover-background-color: #f0f0f0 !important;
+  --amplify-components-button-active-background-color: #e0e0e0 !important;
+  --amplify-components-button-hover-border-color: black !important;
+  --amplify-components-passwordfield-button-focus-border-color: black !important;
+}
+
+
 @layer base {
   * {
     @apply border-border;

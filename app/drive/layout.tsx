@@ -1,5 +1,5 @@
-import DriveFooter from "@/components/Drive/DriveFooter";
-import DriveHeader from "@/components/Drive/DriveHeader";
+import DriveFooter from "@/app/drive/_components/DriveFooter";
+import DriveHeader from "@/app/drive/_components/DriveHeader";
 import { Toaster } from "react-hot-toast";
 
 export default function MainLayout({

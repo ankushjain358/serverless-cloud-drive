@@ -1,0 +1,36 @@
+name: Next.js Build Check
+
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies for Next.js
+      - name: Install dependencies for Next.js
+        run: npm install
+
+      # Step 3: Create amplify_outputs.json with an empty JSON object
+      - name: Create amplify_outputs.json
+        run: echo '{}' > amplify_outputs.json
+
+      # Step 4: Build Next.js project
+      - name: Build Next.js
+        run: npm run build
+
+      # Step 5: Run Next.js linting (optional but recommended)
+      - name: Lint Next.js project
+        run: npm run lint
