@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Specify Node.js version compatible with both Next.js and CDK
+          node-version: '20' # Specify Node.js version compatible with both Next.js and CDK
 
       # Step 3: Install dependencies for Next.js
       - name: Install dependencies for Next.js

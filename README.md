@@ -86,4 +86,9 @@ Redeploy the CDK stack located at `cdk` directory. This creates new version of L
 
 > Note: Here, the deployment might fail, and the you have to update the version hardcoded in the command.
 
-### 3. How to update Lambda functions when new Node.js runtime releases?
+### 3. Updates required when new Node.js runtime releases?
+
+1. Need to update `runtime` in `defineFunction` constructs of all the Lambda functions
+2. Need to update `compatibleRuntimes` for layers in CDK code
+2. Need to update `node-version` GitHub workflow files
+
