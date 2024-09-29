@@ -1,0 +1,47 @@
+name: Next.js and CDK Build Check
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Specify Node.js version compatible with both Next.js and CDK
+
+      # Step 3: Install dependencies for Next.js
+      - name: Install dependencies for Next.js
+        run: npm install
+
+      # Step 4: Build Next.js project
+      - name: Build Next.js
+        run: npm run build
+
+      # Step 5: Run Next.js linting (optional but recommended)
+      - name: Lint Next.js project
+        run: npm run lint
+
+      # Step 6: Install dependencies for CDK (inside the cdk folder)
+      - name: Install dependencies for CDK
+        working-directory: cdk
+        run: npm install
+
+      # Step 7: Synthesize CDK app to check for compilation issues
+      - name: Run CDK Synth
+        working-directory: cdk
+        run: npm run cdk synth
