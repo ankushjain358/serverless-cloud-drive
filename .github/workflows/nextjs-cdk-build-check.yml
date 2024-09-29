@@ -28,20 +28,28 @@ jobs:
       - name: Install dependencies for Next.js
         run: npm install
 
-      # Step 4: Build Next.js project
+      # Step 4: Create amplify_outputs.json with an empty JSON object
+      - name: Create amplify_outputs.json
+        run: echo '{}' > amplify_outputs.json
+
+      # Step 5: Build Next.js project
       - name: Build Next.js
         run: npm run build
 
-      # Step 5: Run Next.js linting (optional but recommended)
+      # Step 6: Run Next.js linting (optional but recommended)
       - name: Lint Next.js project
         run: npm run lint
 
-      # Step 6: Install dependencies for CDK (inside the cdk folder)
+      # Step 7: Install AWS CDK CLI globally
+      - name: Install AWS CDK CLI
+        run: npm install -g aws-cdk
+
+      # Step 8: Install dependencies for CDK (inside the cdk folder)
       - name: Install dependencies for CDK
         working-directory: cdk
         run: npm install
 
-      # Step 7: Synthesize CDK app to check for compilation issues
+      # Step 9: Synthesize CDK app to check for compilation issues
       - name: Run CDK Synth
         working-directory: cdk
-        run: npm run cdk synth
+        run: cdk synth
