@@ -1,10 +1,3 @@
-// import type { Handler } from 'aws-lambda';
-
-// export const handler: Handler = async (event, context) => {
-//   // your function code goes here
-//   return 'Hello, World!';
-// };
-
 import https from 'https';
 import sharp from 'sharp';
 
@@ -25,6 +18,11 @@ interface LambdaResponse {
 
 export const handler = async (event: EventInput): Promise<LambdaResponse> => {
   try {
+
+    console.log("Start: Hello from testing");
+    console.log(event);
+    console.log("End: Hello from testing");
+
     const { imageUrl, width = 300, height = 300 } = event;
 
     // Fetch the image from the provided URL
