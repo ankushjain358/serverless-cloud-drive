@@ -9,7 +9,7 @@ import * as targets from 'aws-cdk-lib/aws-events-targets';
 import 'dotenv/config'
 import { Duration } from 'aws-cdk-lib';
 import { DynamoEventSource, SqsDlq } from 'aws-cdk-lib/aws-lambda-event-sources';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { NodejsFunction, OutputFormat } from 'aws-cdk-lib/aws-lambda-nodejs';
 import path from 'path';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { fileURLToPath } from 'url';
@@ -55,10 +55,11 @@ const fileTableCDCFunction = new NodejsFunction(secondarySatck, 'file-cdc-functi
   bundling: {
     externalModules: ['@aws-sdk/*'],
     minify: false,
-    sourceMap: true
+    sourceMap: true,
+    format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
-  memorySize: 1024
+  memorySize: 1024,
 });
 
 // 3.2. Lambda function (CDC) for Folder table
@@ -69,7 +70,8 @@ const folderTableCDCFunction = new NodejsFunction(secondarySatck, 'folder-cdc-fu
   bundling: {
     externalModules: ['@aws-sdk/*'],
     minify: false,
-    sourceMap: true
+    sourceMap: true,
+    format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
   memorySize: 1024
@@ -84,7 +86,8 @@ const imageProcessingFunction = new NodejsFunction(secondarySatck, 'image-proces
   bundling: {
     externalModules: ['@aws-sdk/*'],
     minify: false,
-    sourceMap: true
+    sourceMap: true,
+    format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
   memorySize: 1024,
@@ -108,7 +111,8 @@ const videoProcessingFunction = new NodejsFunction(secondarySatck, 'video-proces
   bundling: {
     externalModules: ['@aws-sdk/*'],
     minify: false,
-    sourceMap: true
+    sourceMap: true,
+    format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
   memorySize: 1024,
@@ -167,37 +171,43 @@ const cloudDriveEventBus = new events.EventBus(secondarySatck, 'CloudDriveEventB
   eventBusName: 'cloud-drive-event-bus',
 });
 
+// 6.1. Grant event bus permissions to invoke lambda functions
+cloudDriveEventBus.grantPutEventsTo(fileTableCDCFunction);
+cloudDriveEventBus.grantPutEventsTo(folderTableCDCFunction);
 
-// 6.1. Add target to event bus for image processing
+fileTableCDCFunction.addEnvironment('EVENT_BUS_NAME', cloudDriveEventBus.eventBusName);
+folderTableCDCFunction.addEnvironment('EVENT_BUS_NAME', cloudDriveEventBus.eventBusName);
+
+// 6.2. Add target to event bus for image processing
 const targetImageProcessingLambda = new targets.LambdaFunction(imageProcessingFunction, {
   deadLetterQueue: deliveryFailureDLQ, // Optional: add a dead letter queue
   maxEventAge: Duration.hours(2), // Optional: set the maxEventAge retry policy
   retryAttempts: 3 // Optional: set the max number of retry attempts
 });
 
-// 6.2. Add target to event bus for video processing
+// 6.3. Add target to event bus for video processing
 const targetVideoProcessingLambda = new targets.LambdaFunction(videoProcessingFunction, {
   deadLetterQueue: deliveryFailureDLQ,
   maxEventAge: Duration.hours(2),
   retryAttempts: 3
 });
 
-// 6.3. Add event bus rules for image uploaded event
+// 6.4. Add event bus rules for image uploaded event
 new events.Rule(secondarySatck, 'ImageUploadedEventRule', {
   eventBus: cloudDriveEventBus,
   eventPattern: {
-    source: ["clouddrive"],
-    detailType: ['Image_Uploaded']
+    source: ["cloud-drive"],
+    detailType: ['ImageUploadedEvent']
   },
   targets: [targetImageProcessingLambda]
 });
 
-// 6.3. Add event bus rules for video uploaded event
+// 6.5. Add event bus rules for video uploaded event
 new events.Rule(secondarySatck, 'VideoUploadedEventRule', {
   eventBus: cloudDriveEventBus,
   eventPattern: {
-    source: ["clouddrive"],
-    detailType: ['Video_Uploaded']
+    source: ["cloud-drive"],
+    detailType: ['VideoUploadedEvent']
   },
   targets: [targetVideoProcessingLambda]
 });
