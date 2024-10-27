@@ -36,15 +36,3 @@ export const configureAmplify = () => {
         }
     );
 }
-
-//******* Eventbridge Events *******/
-
-export interface ImageUploadedEventDetail {
-    objectKey: string;
-    userId: string;
-}
-
-export interface VideoUploadedEventDetail {
-    objectKey: string;
-    userId: string;
-}

@@ -93,5 +93,8 @@ Redeploy the CDK stack located at `cdk` directory. This creates new version of L
 
 1. Need to update `runtime` in `defineFunction` constructs of all the Lambda functions
 2. Need to update `compatibleRuntimes` for layers in CDK code
-2. Need to update `node-version` GitHub workflow files
+3. Need to update `node-version` GitHub workflow files
 
+## References
+
+- [Publishing EventBridge events with DynamoDB Streams](https://www.boyney.io/blog/2022-11-03-eventbridge-events-with-dynamodb)

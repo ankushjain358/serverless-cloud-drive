@@ -59,7 +59,7 @@ const fileTableCDCFunction = new NodejsFunction(secondarySatck, 'file-cdc-functi
     format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
-  memorySize: 1024,
+  memorySize: 256,
 });
 
 // 3.2. Lambda function (CDC) for Folder table
@@ -74,7 +74,7 @@ const folderTableCDCFunction = new NodejsFunction(secondarySatck, 'folder-cdc-fu
     format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
-  memorySize: 1024
+  memorySize: 256
 });
 
 
@@ -84,24 +84,28 @@ const imageProcessingFunction = new NodejsFunction(secondarySatck, 'image-proces
   runtime: Runtime.NODEJS_20_X,
   handler: 'handler',
   bundling: {
-    externalModules: ['@aws-sdk/*'],
+    externalModules: ['@aws-sdk/*', "sharp"],
     minify: false,
     sourceMap: true,
-    format: OutputFormat.ESM
   },
   timeout: Duration.seconds(60),
-  memorySize: 1024,
+  memorySize: 512,
   retryAttempts: 2,
   maxEventAge: Duration.hours(6),
   onFailure: new SqsDlq(processingFailureDLQ),
   layers: [lambda.LayerVersion.fromLayerVersionArn(secondarySatck, "SharpLayer", sharpLambdaLayerArn)],
   environment: {
-    AMPLIFY_DATA_GRAPHQL_ENDPOINT: backend.data.graphqlUrl
+    AMPLIFY_DATA_GRAPHQL_ENDPOINT: backend.data.graphqlUrl,
+    BUCKET_NAME: backend.storage.resources.bucket.bucketName
   }
 });
 
-// 4.1.2. Grant this lamdba permission to call graphql api
-backend.data.resources.graphqlApi.grantMutation(imageProcessingFunction.role!)
+// 4.1.2. Grant this lamdba permission to invoke graphql api and write on storage bucket
+if (imageProcessingFunction.role) {
+  backend.data.resources.graphqlApi.grantQuery(imageProcessingFunction.role!);
+  backend.data.resources.graphqlApi.grantMutation(imageProcessingFunction.role!);
+  backend.storage.resources.bucket.grantReadWrite(imageProcessingFunction.role!);
+}
 
 // 4.2.1. Lambda function (EventBridge target) for the video processing
 const videoProcessingFunction = new NodejsFunction(secondarySatck, 'video-processing-function', {
@@ -111,22 +115,26 @@ const videoProcessingFunction = new NodejsFunction(secondarySatck, 'video-proces
   bundling: {
     externalModules: ['@aws-sdk/*'],
     minify: false,
-    sourceMap: true,
-    format: OutputFormat.ESM
+    sourceMap: true
   },
   timeout: Duration.seconds(60),
-  memorySize: 1024,
+  memorySize: 2048,
   retryAttempts: 2,
   maxEventAge: Duration.hours(6),
   onFailure: new SqsDlq(processingFailureDLQ),
   layers: [lambda.LayerVersion.fromLayerVersionArn(secondarySatck, "FFmpegLayer", ffmpegLambdaLayerArn)],
   environment: {
-    AMPLIFY_DATA_GRAPHQL_ENDPOINT: backend.data.graphqlUrl
+    AMPLIFY_DATA_GRAPHQL_ENDPOINT: backend.data.graphqlUrl,
+    BUCKET_NAME: backend.storage.resources.bucket.bucketName
   }
 });
 
 // 4.2.2. Grant this lamdba permission to call graphql api
-backend.data.resources.graphqlApi.grantMutation(videoProcessingFunction.role!)
+if (videoProcessingFunction.role) {
+  backend.data.resources.graphqlApi.grantQuery(videoProcessingFunction.role);
+  backend.data.resources.graphqlApi.grantMutation(videoProcessingFunction.role);
+  backend.storage.resources.bucket.grantReadWrite(videoProcessingFunction.role);
+}
 
 
 // 5. Configure lambda functions to consume DynamoDB streams
@@ -153,7 +161,7 @@ fileTableCDCFunction.addEventSource(new DynamoEventSource(fileTable, {
   filters: [insertFilter, deleteFilter],
   batchSize: 10,
   retryAttempts: 3,
-  onFailure: new SqsDlq(processingFailureDLQ) // An Amazon SQS queue destination for discarded records.
+  onFailure: new SqsDlq(processingFailureDLQ)
 }));
 
 // 5.3. Add DynamoDB stream (folder table) as event source 
@@ -162,7 +170,7 @@ folderTableCDCFunction.addEventSource(new DynamoEventSource(folderTable, {
   filters: [deleteFilter],
   batchSize: 10,
   retryAttempts: 3,
-  onFailure: new SqsDlq(processingFailureDLQ) // An Amazon SQS queue destination for discarded records.
+  onFailure: new SqsDlq(processingFailureDLQ)
 }));
 
 

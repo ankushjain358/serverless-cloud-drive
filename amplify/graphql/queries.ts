@@ -11,19 +11,7 @@ type GeneratedQuery<InputType, OutputType> = string & {
 export const getFile = /* GraphQL */ `query GetFile($id: ID!) {
   getFile(id: $id) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -31,45 +19,19 @@ export const getFile = /* GraphQL */ `query GetFile($id: ID!) {
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
 ` as GeneratedQuery<APITypes.GetFileQueryVariables, APITypes.GetFileQuery>;
 export const getFolder = /* GraphQL */ `query GetFolder($id: ID!) {
   getFolder(id: $id) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -79,10 +41,6 @@ export const getUser = /* GraphQL */ `query GetUser($id: ID!) {
   getUser(id: $id) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner
@@ -91,6 +49,28 @@ export const getUser = /* GraphQL */ `query GetUser($id: ID!) {
   }
 }
 ` as GeneratedQuery<APITypes.GetUserQueryVariables, APITypes.GetUserQuery>;
+export const listFileByUserId = /* GraphQL */ `query ListFileByUserId(
+  $filter: ModelFileFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+  $userId: ID!
+) {
+  listFileByUserId(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+    userId: $userId
+  ) {
+    nextToken
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.ListFileByUserIdQueryVariables,
+  APITypes.ListFileByUserIdQuery
+>;
 export const listFiles = /* GraphQL */ `query ListFiles(
   $filter: ModelFileFilterInput
   $id: ID
@@ -105,20 +85,6 @@ export const listFiles = /* GraphQL */ `query ListFiles(
     nextToken: $nextToken
     sortDirection: $sortDirection
   ) {
-    items {
-      createdAt
-      extension
-      fileName
-      fileType
-      folderId
-      id
-      owner
-      s3Key
-      size
-      thumbnailS3Key
-      updatedAt
-      __typename
-    }
     nextToken
     __typename
   }
@@ -138,16 +104,6 @@ export const listFolders = /* GraphQL */ `query ListFolders(
     nextToken: $nextToken
     sortDirection: $sortDirection
   ) {
-    items {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     nextToken
     __typename
   }
@@ -170,15 +126,6 @@ export const listUsers = /* GraphQL */ `query ListUsers(
     nextToken: $nextToken
     sortDirection: $sortDirection
   ) {
-    items {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     nextToken
     __typename
   }

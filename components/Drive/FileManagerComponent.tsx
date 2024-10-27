@@ -20,15 +20,17 @@ type FileManagerComponentProps = {
 
 // create a class for file with few props
 class UploadedFileClass {
+  id: string;
+  userId: string;
   originalName: string;
-  extention: string;
   s3Key: string;
   folderId: string;
   size: number
 
-  constructor(originalName: string, extention: string, s3Key: string, folderId: string, size: number) {
+  constructor(id: string, userId: string, originalName: string, s3Key: string, folderId: string, size: number) {
+    this.id = id;
+    this.userId = userId;
     this.originalName = originalName;
-    this.extention = extention;
     this.s3Key = s3Key;
     this.folderId = folderId;
     this.size = size;
@@ -38,9 +40,9 @@ class UploadedFileClass {
 const saveFile = async (uploadedFile: UploadedFileClass) => {
 
   const { data, errors } = await client.models.File.create({
-    fileType: 'DOCUMENT',
+    id: uploadedFile.id,
+    userId: uploadedFile.userId,
     fileName: uploadedFile.originalName,
-    extension: uploadedFile.extention,
     folderId: uploadedFile.folderId,
     s3Key: uploadedFile.s3Key,
     thumbnailS3Key: null,
@@ -78,13 +80,15 @@ const FileManagerComponent = ({ showUploader, currentFolderId }: FileManagerComp
 
               // prepare required data
               const { userId } = await getCurrentUser();
+              const fileId = uuidv4();
               const fileExtension = params.file.name.split('.').pop();
-              const s3Key = `${userId}/${uuidv4()}.${fileExtension}`.toLowerCase();
+              const s3Key = `${userId}/${fileId}.${fileExtension}`.toLowerCase();
 
               // push to state array
               itemsRef.current.push(new UploadedFileClass(
+                fileId,
+                userId,
                 params.file.name,
-                fileExtension,
                 `drive/${s3Key}`,
                 currentFolderId,
                 params.file.size));

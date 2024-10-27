@@ -14,19 +14,7 @@ export const createFile = /* GraphQL */ `mutation CreateFile(
 ) {
   createFile(condition: $condition, input: $input) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -34,6 +22,7 @@ export const createFile = /* GraphQL */ `mutation CreateFile(
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
@@ -46,39 +35,12 @@ export const createFolder = /* GraphQL */ `mutation CreateFolder(
   $input: CreateFolderInput!
 ) {
   createFolder(condition: $condition, input: $input) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -94,10 +56,6 @@ export const createUser = /* GraphQL */ `mutation CreateUser(
   createUser(condition: $condition, input: $input) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner
@@ -115,19 +73,7 @@ export const deleteFile = /* GraphQL */ `mutation DeleteFile(
 ) {
   deleteFile(condition: $condition, input: $input) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -135,6 +81,7 @@ export const deleteFile = /* GraphQL */ `mutation DeleteFile(
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
@@ -147,39 +94,12 @@ export const deleteFolder = /* GraphQL */ `mutation DeleteFolder(
   $input: DeleteFolderInput!
 ) {
   deleteFolder(condition: $condition, input: $input) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -195,10 +115,6 @@ export const deleteUser = /* GraphQL */ `mutation DeleteUser(
   deleteUser(condition: $condition, input: $input) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner
@@ -216,19 +132,7 @@ export const updateFile = /* GraphQL */ `mutation UpdateFile(
 ) {
   updateFile(condition: $condition, input: $input) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -236,6 +140,7 @@ export const updateFile = /* GraphQL */ `mutation UpdateFile(
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
@@ -248,39 +153,12 @@ export const updateFolder = /* GraphQL */ `mutation UpdateFolder(
   $input: UpdateFolderInput!
 ) {
   updateFolder(condition: $condition, input: $input) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -296,10 +174,6 @@ export const updateUser = /* GraphQL */ `mutation UpdateUser(
   updateUser(condition: $condition, input: $input) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner

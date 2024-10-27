@@ -14,19 +14,7 @@ export const onCreateFile = /* GraphQL */ `subscription OnCreateFile(
 ) {
   onCreateFile(filter: $filter, owner: $owner) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -34,6 +22,7 @@ export const onCreateFile = /* GraphQL */ `subscription OnCreateFile(
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
@@ -46,39 +35,12 @@ export const onCreateFolder = /* GraphQL */ `subscription OnCreateFolder(
   $owner: String
 ) {
   onCreateFolder(filter: $filter, owner: $owner) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -95,10 +57,6 @@ export const onCreateUser = /* GraphQL */ `subscription OnCreateUser(
   onCreateUser(filter: $filter, owner: $owner, profileOwner: $profileOwner) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner
@@ -116,19 +74,7 @@ export const onDeleteFile = /* GraphQL */ `subscription OnDeleteFile(
 ) {
   onDeleteFile(filter: $filter, owner: $owner) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -136,6 +82,7 @@ export const onDeleteFile = /* GraphQL */ `subscription OnDeleteFile(
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
@@ -148,39 +95,12 @@ export const onDeleteFolder = /* GraphQL */ `subscription OnDeleteFolder(
   $owner: String
 ) {
   onDeleteFolder(filter: $filter, owner: $owner) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -197,10 +117,6 @@ export const onDeleteUser = /* GraphQL */ `subscription OnDeleteUser(
   onDeleteUser(filter: $filter, owner: $owner, profileOwner: $profileOwner) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner
@@ -218,19 +134,7 @@ export const onUpdateFile = /* GraphQL */ `subscription OnUpdateFile(
 ) {
   onUpdateFile(filter: $filter, owner: $owner) {
     createdAt
-    extension
     fileName
-    fileType
-    folder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     folderId
     id
     owner
@@ -238,6 +142,7 @@ export const onUpdateFile = /* GraphQL */ `subscription OnUpdateFile(
     size
     thumbnailS3Key
     updatedAt
+    userId
     __typename
   }
 }
@@ -250,39 +155,12 @@ export const onUpdateFolder = /* GraphQL */ `subscription OnUpdateFolder(
   $owner: String
 ) {
   onUpdateFolder(filter: $filter, owner: $owner) {
-    childFolders {
-      nextToken
-      __typename
-    }
     createdAt
-    files {
-      nextToken
-      __typename
-    }
     folderName
     id
     owner
-    parentFolder {
-      createdAt
-      folderName
-      id
-      owner
-      parentFolderId
-      updatedAt
-      userId
-      __typename
-    }
     parentFolderId
     updatedAt
-    user {
-      createdAt
-      email
-      id
-      owner
-      profileOwner
-      updatedAt
-      __typename
-    }
     userId
     __typename
   }
@@ -299,10 +177,6 @@ export const onUpdateUser = /* GraphQL */ `subscription OnUpdateUser(
   onUpdateUser(filter: $filter, owner: $owner, profileOwner: $profileOwner) {
     createdAt
     email
-    folders {
-      nextToken
-      __typename
-    }
     id
     owner
     profileOwner

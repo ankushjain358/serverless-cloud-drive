@@ -12,12 +12,6 @@ and "delete" any "Todo" records.
 // The API will authorize against the full value of <sub>::<username> or sub / username separately and return username.
 
 const schema = a.schema({
-  FileType: a.enum( [
-    'PHOTO',
-    'VIDEO',
-    'AUDIO',
-    'DOCUMENT'
-  ]),
   User: a.model({
     id: a.id().required(),
     email: a.string().required(),
@@ -28,15 +22,17 @@ const schema = a.schema({
   File: a
     .model({
       id: a.id().required(),
-      fileType: a.ref('FileType'),
+      userId: a.id().required(),
       fileName: a.string().required(),
-      extension: a.string().required(),
       folderId: a.string().required(),
       s3Key: a.string().required(),
       thumbnailS3Key: a.string(),
       size: a.integer().required(),
       folder: a.belongsTo('Folder', 'folderId'),
     })
+    // GSI to get files by userId to calculate total size 
+    // Note: Though we could add relationship with User table (but this is just to explore another way of doing the same thing)
+    .secondaryIndexes((index) => [index("userId")]) 
     // The "owner" of a File is allowed to create, read, update, and delete their own Files
     .authorization(allow => [allow.owner()]), // Per-user/per-owner data access
   Folder: a

@@ -5,9 +5,7 @@
 export type File = {
   __typename: "File",
   createdAt: string,
-  extension: string,
   fileName: string,
-  fileType?: FileType | null,
   folder?: Folder | null,
   folderId: string,
   id: string,
@@ -16,15 +14,8 @@ export type File = {
   size: number,
   thumbnailS3Key?: string | null,
   updatedAt: string,
+  userId: string,
 };
-
-export enum FileType {
-  AUDIO = "AUDIO",
-  DOCUMENT = "DOCUMENT",
-  PHOTO = "PHOTO",
-  VIDEO = "VIDEO",
-}
-
 
 export type Folder = {
   __typename: "Folder",
@@ -67,9 +58,7 @@ export type User = {
 export type ModelFileFilterInput = {
   and?: Array< ModelFileFilterInput | null > | null,
   createdAt?: ModelStringInput | null,
-  extension?: ModelStringInput | null,
   fileName?: ModelStringInput | null,
-  fileType?: ModelFileTypeInput | null,
   folderId?: ModelStringInput | null,
   id?: ModelIDInput | null,
   not?: ModelFileFilterInput | null,
@@ -79,6 +68,7 @@ export type ModelFileFilterInput = {
   size?: ModelIntInput | null,
   thumbnailS3Key?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
+  userId?: ModelIDInput | null,
 };
 
 export type ModelStringInput = {
@@ -119,11 +109,6 @@ export type ModelSizeInput = {
   le?: number | null,
   lt?: number | null,
   ne?: number | null,
-};
-
-export type ModelFileTypeInput = {
-  eq?: FileType | null,
-  ne?: FileType | null,
 };
 
 export type ModelIDInput = {
@@ -194,9 +179,7 @@ export type ModelUserConnection = {
 export type ModelFileConditionInput = {
   and?: Array< ModelFileConditionInput | null > | null,
   createdAt?: ModelStringInput | null,
-  extension?: ModelStringInput | null,
   fileName?: ModelStringInput | null,
-  fileType?: ModelFileTypeInput | null,
   folderId?: ModelStringInput | null,
   not?: ModelFileConditionInput | null,
   or?: Array< ModelFileConditionInput | null > | null,
@@ -205,17 +188,17 @@ export type ModelFileConditionInput = {
   size?: ModelIntInput | null,
   thumbnailS3Key?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
+  userId?: ModelIDInput | null,
 };
 
 export type CreateFileInput = {
-  extension: string,
   fileName: string,
-  fileType?: FileType | null,
   folderId: string,
   id?: string | null,
   s3Key: string,
   size: number,
   thumbnailS3Key?: string | null,
+  userId: string,
 };
 
 export type ModelFolderConditionInput = {
@@ -267,14 +250,13 @@ export type DeleteUserInput = {
 };
 
 export type UpdateFileInput = {
-  extension?: string | null,
   fileName?: string | null,
-  fileType?: FileType | null,
   folderId?: string | null,
   id: string,
   s3Key?: string | null,
   size?: number | null,
   thumbnailS3Key?: string | null,
+  userId?: string | null,
 };
 
 export type UpdateFolderInput = {
@@ -293,9 +275,7 @@ export type UpdateUserInput = {
 export type ModelSubscriptionFileFilterInput = {
   and?: Array< ModelSubscriptionFileFilterInput | null > | null,
   createdAt?: ModelSubscriptionStringInput | null,
-  extension?: ModelSubscriptionStringInput | null,
   fileName?: ModelSubscriptionStringInput | null,
-  fileType?: ModelSubscriptionStringInput | null,
   folderId?: ModelSubscriptionStringInput | null,
   id?: ModelSubscriptionIDInput | null,
   or?: Array< ModelSubscriptionFileFilterInput | null > | null,
@@ -304,6 +284,7 @@ export type ModelSubscriptionFileFilterInput = {
   size?: ModelSubscriptionIntInput | null,
   thumbnailS3Key?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
+  userId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionStringInput = {
@@ -379,19 +360,7 @@ export type GetFileQuery = {
   getFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -399,6 +368,7 @@ export type GetFileQuery = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -409,39 +379,12 @@ export type GetFolderQueryVariables = {
 export type GetFolderQuery = {
   getFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -455,14 +398,25 @@ export type GetUserQuery = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,
     updatedAt: string,
+  } | null,
+};
+
+export type ListFileByUserIdQueryVariables = {
+  filter?: ModelFileFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  userId: string,
+};
+
+export type ListFileByUserIdQuery = {
+  listFileByUserId?:  {
+    __typename: "ModelFileConnection",
+    nextToken?: string | null,
   } | null,
 };
 
@@ -477,20 +431,6 @@ export type ListFilesQueryVariables = {
 export type ListFilesQuery = {
   listFiles?:  {
     __typename: "ModelFileConnection",
-    items:  Array< {
-      __typename: "File",
-      createdAt: string,
-      extension: string,
-      fileName: string,
-      fileType?: FileType | null,
-      folderId: string,
-      id: string,
-      owner?: string | null,
-      s3Key: string,
-      size: number,
-      thumbnailS3Key?: string | null,
-      updatedAt: string,
-    } | null >,
     nextToken?: string | null,
   } | null,
 };
@@ -506,16 +446,6 @@ export type ListFoldersQueryVariables = {
 export type ListFoldersQuery = {
   listFolders?:  {
     __typename: "ModelFolderConnection",
-    items:  Array< {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null >,
     nextToken?: string | null,
   } | null,
 };
@@ -531,15 +461,6 @@ export type ListUsersQueryVariables = {
 export type ListUsersQuery = {
   listUsers?:  {
     __typename: "ModelUserConnection",
-    items:  Array< {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null >,
     nextToken?: string | null,
   } | null,
 };
@@ -553,19 +474,7 @@ export type CreateFileMutation = {
   createFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -573,6 +482,7 @@ export type CreateFileMutation = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -584,39 +494,12 @@ export type CreateFolderMutationVariables = {
 export type CreateFolderMutation = {
   createFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -631,10 +514,6 @@ export type CreateUserMutation = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,
@@ -651,19 +530,7 @@ export type DeleteFileMutation = {
   deleteFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -671,6 +538,7 @@ export type DeleteFileMutation = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -682,39 +550,12 @@ export type DeleteFolderMutationVariables = {
 export type DeleteFolderMutation = {
   deleteFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -729,10 +570,6 @@ export type DeleteUserMutation = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,
@@ -749,19 +586,7 @@ export type UpdateFileMutation = {
   updateFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -769,6 +594,7 @@ export type UpdateFileMutation = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -780,39 +606,12 @@ export type UpdateFolderMutationVariables = {
 export type UpdateFolderMutation = {
   updateFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -827,10 +626,6 @@ export type UpdateUserMutation = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,
@@ -847,19 +642,7 @@ export type OnCreateFileSubscription = {
   onCreateFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -867,6 +650,7 @@ export type OnCreateFileSubscription = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -878,39 +662,12 @@ export type OnCreateFolderSubscriptionVariables = {
 export type OnCreateFolderSubscription = {
   onCreateFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -926,10 +683,6 @@ export type OnCreateUserSubscription = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,
@@ -946,19 +699,7 @@ export type OnDeleteFileSubscription = {
   onDeleteFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -966,6 +707,7 @@ export type OnDeleteFileSubscription = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -977,39 +719,12 @@ export type OnDeleteFolderSubscriptionVariables = {
 export type OnDeleteFolderSubscription = {
   onDeleteFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -1025,10 +740,6 @@ export type OnDeleteUserSubscription = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,
@@ -1045,19 +756,7 @@ export type OnUpdateFileSubscription = {
   onUpdateFile?:  {
     __typename: "File",
     createdAt: string,
-    extension: string,
     fileName: string,
-    fileType?: FileType | null,
-    folder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     folderId: string,
     id: string,
     owner?: string | null,
@@ -1065,6 +764,7 @@ export type OnUpdateFileSubscription = {
     size: number,
     thumbnailS3Key?: string | null,
     updatedAt: string,
+    userId: string,
   } | null,
 };
 
@@ -1076,39 +776,12 @@ export type OnUpdateFolderSubscriptionVariables = {
 export type OnUpdateFolderSubscription = {
   onUpdateFolder?:  {
     __typename: "Folder",
-    childFolders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     createdAt: string,
-    files?:  {
-      __typename: "ModelFileConnection",
-      nextToken?: string | null,
-    } | null,
     folderName: string,
     id: string,
     owner?: string | null,
-    parentFolder?:  {
-      __typename: "Folder",
-      createdAt: string,
-      folderName: string,
-      id: string,
-      owner?: string | null,
-      parentFolderId: string,
-      updatedAt: string,
-      userId: string,
-    } | null,
     parentFolderId: string,
     updatedAt: string,
-    user?:  {
-      __typename: "User",
-      createdAt: string,
-      email: string,
-      id: string,
-      owner?: string | null,
-      profileOwner?: string | null,
-      updatedAt: string,
-    } | null,
     userId: string,
   } | null,
 };
@@ -1124,10 +797,6 @@ export type OnUpdateUserSubscription = {
     __typename: "User",
     createdAt: string,
     email: string,
-    folders?:  {
-      __typename: "ModelFolderConnection",
-      nextToken?: string | null,
-    } | null,
     id: string,
     owner?: string | null,
     profileOwner?: string | null,

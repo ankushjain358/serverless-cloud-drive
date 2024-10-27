@@ -63,6 +63,7 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
             case 'mp4':
             case 'avi':
             case 'mov':
+            case 'mkv':
                 return <VideoIcon className={`${iconSize} text-blue-500`} />;
             default:
                 return <FileIcon className={`${iconSize} text-blue-500`} />;
@@ -73,30 +74,38 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
         const extension = file.fileName.split('.').pop()?.toLowerCase();
         const iconSize = `w-${size} h-${size}`;
 
-        // image, video, pdf, and other files
-        switch (extension) {
-            case 'jpg':
-            case 'jpeg':
-            case 'png':
-            case 'gif':
-            case 'heic':
-                return <div className='h-32 w-full'>
+        // Note: Backend does thumbnail processing on only selected extensions.
+        // But here we will consider more extensions for images and videos.
+        // For exampple, git, and heic are images but not processed for thumnail.
+        // For more detail, refer file-cdc-lambda
+
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'heic'];
+        const videoExtensions = ['mp4', 'avi', 'mov', 'mkv'];
+
+        if (file.thumbnailS3Key) {
+            return (
+                <div className='h-32 w-full'>
                     <StorageImage
-                        path={file.s3Key}
+                        path={file.thumbnailS3Key}
                         objectFit={'cover'}
                         alt={file.fileName}
                         width="100%"
                         height="100%"
-                    ></StorageImage >
+                    />
                 </div>
-            case 'mp4':
-            case 'avi':
-            case 'mov':
-                return <VideoIcon className={`${iconSize} text-blue-500`} />;
-            default:
-                return <FileIcon className={`${iconSize} text-blue-500`} />;
+            );
         }
-    }
+
+        if (imageExtensions.includes(extension || '')) {
+            return <ImageIcon className={`${iconSize} text-blue-500`} />;
+        }
+
+        if (videoExtensions.includes(extension || '')) {
+            return <VideoIcon className={`${iconSize} text-blue-500`} />;
+        }
+
+        return <FileIcon className={`${iconSize} text-blue-500`} />;
+    };
 
 
     return (
