@@ -32,7 +32,7 @@ const client = generateClient<Schema>()
 // form schema
 const formSchema = z.object({
   parentFolderId: z.string().min(1),
-  folderName: z.string().trim().min(1, "Folder name is required").max(50, "Folder name must be 50 characters or less"),
+  folderName: z.string().trim().min(1, "Folder name is required").max(30, "Folder name must be 30 characters or less"),
 });
 
 // Component props

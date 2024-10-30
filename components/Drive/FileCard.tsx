@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileIcon, ImageIcon, MoreHorizontal, VideoIcon } from "lucide-react";
-import { getUrl } from 'aws-amplify/storage';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,9 +9,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Schema } from '@/amplify/data/resource';
-import toast from 'react-hot-toast';
 import moment from 'moment';
-import { Image } from '@aws-amplify/ui-react';
 import { StorageImage } from '@aws-amplify/ui-react-storage';
 
 
@@ -20,33 +17,23 @@ type File = Schema['File']['type'];
 
 interface FileCardProps {
     file: File;
+    onSingleClick: (file: File) => void;
+    onDoubleClick: (file: File) => void;
+    onDeleteClick: (file: File) => void;
+    onRenameClick: (file: File) => void;
+    onDownloadClick: (file: File) => void;
 }
 
 
-const FileCard: React.FC<FileCardProps> = ({ file }) => {
+const FileCard: React.FC<FileCardProps> = ({
+    file,
+    onSingleClick,
+    onDeleteClick,
+    onDoubleClick,
+    onDownloadClick,
+    onRenameClick
+}) => {
 
-    const truncateFileName = (name: string, maxLength = 20) => {
-        if (name.length <= maxLength) return name;
-        return name.substring(0, maxLength - 3) + '...';
-    };
-
-    const downloadFile = async (fileInput: File) => {
-        const linkToStorageFile = await getUrl({
-            path: fileInput.s3Key,
-            options: {
-                contentDisposition: `attachment; filename="${fileInput.fileName}"`,
-            }
-        });
-        window.open(linkToStorageFile.url, '_blank');
-    };
-
-    const deleteFile = async (fileInput: File) => {
-        toast.error('Not implemented');
-    }
-
-    const renameFile = async (fileInput: File) => {
-        toast.error('Not implemented');
-    }
 
     const getFileIcon = (filename: string, size: number) => {
         const extension = filename.split('.').pop()?.toLowerCase();
@@ -84,7 +71,7 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
 
         if (file.thumbnailS3Key) {
             return (
-                <div className='h-32 w-full'>
+                <div className='h-full w-full'>
                     <StorageImage
                         path={file.thumbnailS3Key}
                         objectFit={'cover'}
@@ -109,32 +96,33 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
 
 
     return (
-        <Card className="w-64 h-48 bg-gray-100 relative mb-5">
+        <Card className="bg-gray-100 relative mb-5 select-none hover:bg-gray-200" onClick={() => onSingleClick(file)}>
             <CardContent className="p-0 flex flex-col h-full">
                 <div className="flex items-center justify-between p-2 border-b">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 min-w-0 flex-1">
                         {getFileIcon(file.fileName, 5)}
-                        <span className="text-sm font-medium">
-                            {truncateFileName(file.fileName)}
+                        <span className="text-sm font-medium truncate block">
+                            {file.fileName}
                         </span>
                     </div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
                                 <MoreHorizontal className="h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => downloadFile(file)} >Download</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => deleteFile(file)}>Rename</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => renameFile(file)}>Delete</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDownloadClick(file)}>Download</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onRenameClick(file)}>Rename</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onDeleteClick(file)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div className="flex-grow bg-white flex items-center justify-center">
+
+                <div className="h-32 flex-grow bg-white flex items-center justify-center" onDoubleClick={() => onDoubleClick(file)}>
                     {getFilePreview(file, 12)}
                 </div>
-                <CardFooter className="w-full p-2 text-xs bg-gray-100 text-white-500">
+                <CardFooter className="w-full p-2 text-xs text-white-500 truncate">
                     Created: {moment(file.createdAt).format("DD MMM yyyy")}
                 </CardFooter>
             </CardContent>

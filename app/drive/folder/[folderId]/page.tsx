@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Breadcrumb, { BreadcrumbLink } from "@/components/Drive/Breadcrumb";
 import _ from 'lodash'
+import LoadingComponent from "../../_components/Loading";
 
 type Folder = Schema['Folder']['type'];
 type File = Schema['File']['type'];
@@ -25,6 +26,7 @@ export default function Folder({ params }: { params: { folderId: string } }) {
 
   const CURRENT_FOLDER_ID = params.folderId
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showUploader, setShowUploader] = useState(false);
 
@@ -43,6 +45,7 @@ export default function Folder({ params }: { params: { folderId: string } }) {
       setCurrentFolder(current_folder!);
       setFolders(_.orderBy(child_folders, ["createdAt"]))
       setFiles(_.orderBy(files, ["createdAt"]))
+      setIsLoading(false);
 
       // subscribe mutations
       const fileSubscription = client.models.File.onCreate({
@@ -96,60 +99,62 @@ export default function Folder({ params }: { params: { folderId: string } }) {
 
   return (
     <>
+      {isLoading && <LoadingComponent></LoadingComponent>}
 
-      {/* Add folder button */}
-      <div className="py-4">
-        <div className="flex justify-between items-center">
-          {/* Breadcrumb */}
-          <nav className="flex" aria-label="Breadcrumb">
-            <Breadcrumb breadcrumbs={breadcrumbs}></Breadcrumb>
-          </nav>
-
+      {!isLoading &&
+        <>
           {/* Add folder button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>+ Add</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => setIsDialogOpen(true)} className="cursor-pointer">
-                Add Folder
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setShowUploader(true)} className="cursor-pointer">
-                Upload Files
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+          <div className="py-4">
+            <div className="flex justify-between items-center">
+              {/* Breadcrumb */}
+              <nav className="flex" aria-label="Breadcrumb">
+                <Breadcrumb breadcrumbs={breadcrumbs}></Breadcrumb>
+              </nav>
 
-      {/* File manager component */}
-      <FileManagerComponent
-        showUploader={showUploader}
-        currentFolderId={CURRENT_FOLDER_ID}
-      />
+              {/* Add folder button */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button>+ Add</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={() => setIsDialogOpen(true)} className="cursor-pointer">
+                    Add Folder
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setShowUploader(true)} className="cursor-pointer">
+                    Upload Files
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
 
-      {/* Folder dialog component */}
-      <FolderDialog
-        currentFolderId={CURRENT_FOLDER_ID}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
+          {/* File manager component */}
+          <FileManagerComponent
+            showUploader={showUploader}
+            currentFolderId={CURRENT_FOLDER_ID}
+          />
 
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full p-6">
-        <div className="flex flex-col space-y-1.5 p-4">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">{currentFolder?.folderName}</h3>
-        </div>
+          {/* Folder dialog component */}
+          <FolderDialog
+            currentFolderId={CURRENT_FOLDER_ID}
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+          />
 
-        {/* Folder list component */}
-        <FolderList folders={folders} />
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full p-6">
+            <div className="flex flex-col space-y-1.5 p-4">
+              <h3 className="text-2xl font-semibold leading-none tracking-tight">{currentFolder?.folderName}</h3>
+            </div>
 
-        <hr className="my-4" />
+            {/* Folder list component */}
+            <FolderList folders={folders} />
 
-        {/* File list component */}
-        <FileList files={files} />
-      </div>
+            <hr className="my-4" />
 
-
+            {/* File list component */}
+            <FileList files={files} />
+          </div>
+        </>}
     </>
 
   );

@@ -21,7 +21,17 @@ export default function SubscriptionsComponent() {
             error: (error) => console.warn(error),
         });
 
-        return () => createSub.unsubscribe();
+        const deleteSub = client.models.File.onDelete().subscribe({
+            next: (data) => console.log(data),
+            error: (error) => console.warn(error),
+        });
+
+
+        return () => {
+            createSub.unsubscribe();
+            updateSub.unsubscribe();
+            deleteSub.unsubscribe();
+        }
     }, []);
 
     return <></>;

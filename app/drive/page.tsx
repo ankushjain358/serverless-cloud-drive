@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "aws-amplify/auth";
 import _ from 'lodash'
+import LoadingComponent from "./_components/Loading";
 
 const CURRENT_FOLDER_ID = "ROOT"
 type Folder = Schema['Folder']['type'];
@@ -22,6 +23,7 @@ const client = generateClient<Schema>()
 
 export default function Home() {
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [folders, setFolders] = useState<Folder[]>([]);
 
@@ -36,7 +38,7 @@ export default function Home() {
       var root_folders = folders.filter((folder) => folder.parentFolderId === CURRENT_FOLDER_ID)
 
       setFolders(_.orderBy(root_folders, ["createdAt"]));
-
+      setIsLoading(false);
 
       // subscribe mutations
       const folderSubscription = client.models.Folder.onCreate({
@@ -66,44 +68,49 @@ export default function Home() {
 
   return (
     <>
-      {/* Add folder button */}
-      <div className="py-2">
-        <div className="flex justify-end mb-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>+ Add</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => setIsDialogOpen(true)} className="cursor-pointer">
-                Add Folder
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      {isLoading && <LoadingComponent></LoadingComponent>}
 
-      {/* File manager component */}
-      < FileManagerComponent
-        showUploader={false}
-        currentFolderId={CURRENT_FOLDER_ID}
-      />
+      {!isLoading &&
+        <>
+          {/* Add folder button */}
+          <div className="py-2">
+            <div className="flex justify-end mb-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button>+ Add</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={() => setIsDialogOpen(true)} className="cursor-pointer">
+                    Add Folder
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
 
-      {/* Folder dialog component */}
-      <FolderDialog
-        currentFolderId={CURRENT_FOLDER_ID}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
+          {/* File manager component */}
+          < FileManagerComponent
+            showUploader={false}
+            currentFolderId={CURRENT_FOLDER_ID}
+          />
 
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full p-6">
-        <div className="flex flex-col space-y-1.5 p-4">
-          <h3 className="text-2xl font-semibold leading-none tracking-tight">Folders</h3>
-          <p className="text-sm text-muted-foreground">
-            Manage your folders </p></div>
+          {/* Folder dialog component */}
+          <FolderDialog
+            currentFolderId={CURRENT_FOLDER_ID}
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+          />
 
-        {/* Folder list component */}
-        <FolderList folders={folders} />
-      </div>
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm w-full p-6">
+            <div className="flex flex-col space-y-1.5 p-4">
+              <h3 className="text-2xl font-semibold leading-none tracking-tight">Folders</h3>
+              <p className="text-sm text-muted-foreground">
+                Manage your folders </p></div>
+
+            {/* Folder list component */}
+            <FolderList folders={folders} />
+          </div>
+        </>}
     </>
 
   );

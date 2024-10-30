@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -36,6 +36,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0",
+    "yet-another-react-lightbox": "^3.21.6",
     "zod": "^3.23.8"
   },
   "devDependencies": {
