@@ -175,9 +175,7 @@ folderTableCDCFunction.addEventSource(new DynamoEventSource(folderTable, {
 
 
 // 6. EventBridge events for image and video processing
-const cloudDriveEventBus = new events.EventBus(secondarySatck, 'CloudDriveEventBus', {
-  eventBusName: 'cloud-drive-event-bus',
-});
+const cloudDriveEventBus = new events.EventBus(secondarySatck, 'CloudDriveEventBus');
 
 // 6.1. Grant event bus permissions to invoke lambda functions
 cloudDriveEventBus.grantPutEventsTo(fileTableCDCFunction);
