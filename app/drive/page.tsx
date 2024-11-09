@@ -29,19 +29,11 @@ export default function Home() {
 
   useEffect(() => {
 
-    async function loadDataAsync() {
+    let folderSubscription: any;
 
-      const { userId } = await getCurrentUser();
-      const { data: current_user } = await client.models.User.get({ id: userId });
-      const { data: folders } = await current_user!.folders()
+    const subscribeChanges = (userId: string) => {
 
-      var root_folders = folders.filter((folder) => folder.parentFolderId === CURRENT_FOLDER_ID)
-
-      setFolders(_.orderBy(root_folders, ["createdAt"]));
-      setIsLoading(false);
-
-      // subscribe mutations
-      const folderSubscription = client.models.Folder.onCreate({
+      folderSubscription = client.models.Folder.onCreate({
         filter: {
           userId: {
             eq: userId
@@ -56,13 +48,31 @@ export default function Home() {
         },
         error: (error) => console.error(error)
       });
+    }
 
-      return () => {
-        folderSubscription.unsubscribe();
-      }
+    async function loadDataAsync() {
+
+      const { userId } = await getCurrentUser();
+      const { data: current_user } = await client.models.User.get({ id: userId });
+      const { data: folders } = await current_user!.folders()
+
+      var root_folders = folders.filter((folder) => folder.parentFolderId === CURRENT_FOLDER_ID)
+
+      setFolders(_.orderBy(root_folders, ["createdAt"]));
+      setIsLoading(false);
+
+      subscribeChanges(userId);
+    }
+
+    const unsubscribeChanges = () => {
+      folderSubscription?.unsubscribe();
     }
 
     loadDataAsync();
+
+    return () => {
+      unsubscribeChanges();
+    }
 
   }, []);
 

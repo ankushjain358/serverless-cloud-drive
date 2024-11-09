@@ -47,32 +47,6 @@ export default function Folder({ params }: { params: { folderId: string } }) {
       setFiles(_.orderBy(files, ["createdAt"]))
       setIsLoading(false);
 
-      // subscribe mutations
-      const fileSubscription = client.models.File.onCreate({
-        filter: {
-          folderId: {
-            eq: CURRENT_FOLDER_ID,
-          },
-        },
-      }).subscribe({
-        next: (data) => {
-          setFiles((files) => [...files, data]);
-        },
-        error: (error) => console.error(error)
-      });
-
-      const folderSubscription = client.models.Folder.onCreate({
-        filter: {
-          parentFolderId: {
-            eq: CURRENT_FOLDER_ID,
-          },
-        },
-      }).subscribe({
-        next: (data) => {
-          setFolders((folders) => [...folders, data]);
-        },
-        error: (error) => console.error(error)
-      });
 
 
       // set breadcrumbs
@@ -86,15 +60,73 @@ export default function Folder({ params }: { params: { folderId: string } }) {
 
       breadcrumbs.push({ name: 'Home', href: '/drive' });
       setBreadcrumbs(breadcrumbs.reverse());
+    }
 
-      return () => {
-        fileSubscription.unsubscribe();
-        folderSubscription.unsubscribe();
-      }
+    let fileCreatedSubscription: any;
+    let fileUpdatedSubscription: any;
+    let folderSubscription: any;
+
+    const subscribeChanges = () => {
+
+      fileCreatedSubscription = client.models.File.onCreate({
+        filter: {
+          folderId: {
+            eq: CURRENT_FOLDER_ID,
+          },
+        },
+      }).subscribe({
+        next: (data) => {
+          setFiles((files) => [...files, data]);
+        },
+        error: (error) => console.error(error)
+      });
+
+      fileUpdatedSubscription = client.models.File.onUpdate({
+        filter: {
+          folderId: {
+            eq: CURRENT_FOLDER_ID,
+          },
+        }
+      }).subscribe({
+        next: (data) => {
+          setFiles((files) => {
+            const index = files.findIndex((file) => file.id === data.id);
+            if (index !== -1) {
+              files[index] = data;
+            }
+            return [...files];
+          });
+        },
+        error: (error) => console.error(error)
+      });
+
+
+      folderSubscription = client.models.Folder.onCreate({
+        filter: {
+          parentFolderId: {
+            eq: CURRENT_FOLDER_ID,
+          },
+        },
+      }).subscribe({
+        next: (data) => {
+          setFolders((folders) => [...folders, data]);
+        },
+        error: (error) => console.error(error)
+      });
+    }
+
+    const unsubscribeChanges = () => {
+      fileCreatedSubscription.unsubscribe();
+      fileUpdatedSubscription.unsubscribe();
+      folderSubscription.unsubscribe();
     }
 
     loadDataAsync();
+    subscribeChanges();
 
+    return () => {
+      unsubscribeChanges();
+    }
   }, []);
 
   return (

@@ -68,7 +68,7 @@ async function createAndStoreThumbnail(bucket: string, fileId: string, objectKey
 
     const fileName = objectKey.split('/').pop();
     if (fileName)
-      downloadFileFromPresignedUrl(presignedUrl, fileName)
+      await downloadFileFromPresignedUrl(presignedUrl, fileName)
     else
       throw new Error("Invalid file name")
 

@@ -54,6 +54,7 @@ async function createAndStoreThumbnail(bucket: string, fileId: string, objectKey
     // Process the image with Sharp
     logger.info('Creating thumbnail')
     const thumbnailBuffer = await sharp(buffer)
+      .rotate()
       .resize(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, {
         fit: 'inside'
       })
